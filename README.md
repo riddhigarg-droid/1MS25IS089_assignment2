@@ -30,34 +30,34 @@ sequenceDiagram
     actor User as User / Researcher
     participant UI as NEXUS Web UI (React + Vite)
     participant API as FastAPI Backend Controller
-    participant Loop as ReAct Agent Loop
+    participant Agent as ReAct Agent Loop
     participant LLM as Google Gemini (gemini-3.5-flash-lite)
     participant Search as Web Search Engine (DDGS / Tavily)
 
     User->>UI: Submits Query ("Compare FastAPI and Flask")
     UI->>API: POST /api/agent/stream (SSE Connection)
-    API->>Loop: Initializes ReAct Context (max_iterations=5)
-    Loop-->>UI: Event: agent_started
+    API->>Agent: Initializes ReAct Context (max_iterations=5)
+    Agent-->>UI: Event: agent_started
 
     loop ReAct Multi-Turn Cycle (Until Model Synthesizes or Max Iterations Reached)
-        Loop-->>UI: Event: planning (Agent Reasoning)
-        Loop->>LLM: generate_content(contents, tools=[web_search])
-        LLM-->>Loop: Tool Call Request: web_search(query="FastAPI vs Flask 2026 benchmarks")
-        Loop-->>UI: Event: tool_call (Tool Selected)
-        Loop-->>UI: Event: tool_started (Searching the Web)
+        Agent-->>UI: Event: planning (Agent Reasoning)
+        Agent->>LLM: generate_content(contents, tools=[web_search])
+        LLM-->>Agent: Tool Call Request: web_search(query="FastAPI vs Flask 2026 benchmarks")
+        Agent-->>UI: Event: tool_call (Tool Selected)
+        Agent-->>UI: Event: tool_started (Searching the Web)
 
-        Loop->>Search: search(query, max_results=5)
-        Search-->>Loop: Real Search Results (Title, URL, Snippet, Domain)
-        Loop-->>UI: Event: tool_result (Retrieved Results + Latency)
+        Agent->>Search: search(query, max_results=5)
+        Search-->>Agent: Real Search Results (Title, URL, Snippet, Domain)
+        Agent-->>UI: Event: tool_result (Retrieved Results + Latency)
 
-        Loop->>Loop: Format Observation & Ingest Facts
-        Loop-->>UI: Event: observation (Feeding results back to Model memory)
-        Loop->>LLM: Feed ToolResponse as types.Part.from_function_response
+        Agent->>Agent: Format Observation & Ingest Facts
+        Agent-->>UI: Event: observation (Feeding results back to Model memory)
+        Agent->>LLM: Feed ToolResponse as types.Part.from_function_response
     end
 
-    LLM-->>Loop: Model Synthesizes Final Answer with Citations [1], [2]
-    Loop-->>UI: Event: final_answer (Markdown + Verified Citations)
-    Loop-->>UI: Event: agent_completed (Execution Complete)
+    LLM-->>Agent: Model Synthesizes Final Answer with Citations [1], [2]
+    Agent-->>UI: Event: final_answer (Markdown + Verified Citations)
+    Agent-->>UI: Event: agent_completed (Execution Complete)
     UI-->>User: Displays Formatted Answer, Citations & Execution Graph
 ```
 
@@ -99,7 +99,7 @@ sequenceDiagram
 | **Backend** | Python 3.14 / 3.11+, FastAPI, Uvicorn, Pydantic v2, Pydantic-Settings, SSE-Starlette |
 | **AI / LLM** | Google GenAI SDK (`google-genai` >= 3.0.0), Default Model: `gemini-3.5-flash-lite` |
 | **Search Engine** | DuckDuckGo (`ddgs` >= 9.16.0, free out-of-the-box), Optional: Tavily AI Search, Google Serper |
-| **Testing** | Pytest, Pytest-Asyncio, HTTPX ASGI Transport (10/10 automated tests passing) |
+| **Testing** | Pytest, Pytest-Asyncio, HTTPX ASGI Transport (11/11 automated tests passing) |
 
 ---
 
