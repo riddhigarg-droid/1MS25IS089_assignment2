@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: nexus-react-agent-api
+    env: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "python -m uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DEFAULT_MODEL
+        value: gemini-3.5-flash-lite
+      - key: MAX_ITERATIONS
+        value: 5
+      - key: SEARCH_PROVIDER
+        value: duckduckgo
+      - key: PYTHON_VERSION
+        value: 3.11.9

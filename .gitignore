@@ -1,0 +1,25 @@
+# Environment and Virtualenvs
+.env
+.venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+.pytest_cache/
+conversations_data.json
+
+# Node & Frontend
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Editor & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
